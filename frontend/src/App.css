@@ -1,0 +1,20 @@
+.container {
+  text-align: center;
+  font-family: Arial;
+}
+
+.images img {
+  width: 45%;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+.loader {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {opacity: 0.3;}
+  50% {opacity: 1;}
+  100% {opacity: 0.3;}
+}
