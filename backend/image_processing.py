@@ -1,25 +1,26 @@
 import cv2
 import numpy as np
 
+
 def enhance_image(image):
-    image = cv2.resize(image, (1920, 1080))
+    """Perform simple histogram equalization on the luminance channel only.
 
-    # Convert to LAB
-    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
-    l, a, b = cv2.split(lab)
+    This preserves colors and the original image dimensions while improving
+    brightness/contrast via equalizing the Y channel in YCrCb color space.
+    """
+    if image is None:
+        return image
 
-    # CLAHE
-    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
-    cl = clahe.apply(l)
+    # Ensure image is uint8 BGR
+    if image.dtype != np.uint8:
+        image = cv2.convertScaleAbs(image)
 
-    merged = cv2.merge((cl, a, b))
-    enhanced = cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)
+    # Convert BGR to YCrCb and equalize the Y (luma) channel
+    ycrcb = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
+    y, cr, cb = cv2.split(ycrcb)
+    y_eq = cv2.equalizeHist(y)
 
-    # Denoising
-    enhanced = cv2.fastNlMeansDenoisingColored(enhanced, None, 10, 10, 7, 21)
-
-    # Sharpen
-    kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
-    enhanced = cv2.filter2D(enhanced, -1, kernel)
+    ycrcb_eq = cv2.merge((y_eq, cr, cb))
+    enhanced = cv2.cvtColor(ycrcb_eq, cv2.COLOR_YCrCb2BGR)
 
     return enhanced
