@@ -4,7 +4,7 @@ services:
     build: ./backend
     container_name: image_enhancer_backend
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - ./backend:/app
     restart: always
